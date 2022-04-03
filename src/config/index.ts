@@ -2,7 +2,10 @@ export default () => {
 	return {
 		IAMService: {
 			host: process.env.IAM_HOST,
-			port: process.env.IAM_PORT,
+			port: parseInt(process.env.IAM_PORT, 10),
 		},
+		botAccessToken: process.env.BOT_ACCESS_TOKEN,
+		redisUrl: process.env.REDIS_URL,
+		webHost: process.env.WEB_HOST,
 	};
 };
