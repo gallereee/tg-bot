@@ -7,13 +7,29 @@ import { AllExceptionFilter } from "app/filters/exceptions";
 import { PMSService } from "PMS/service";
 import { FileProvider } from "PMS/dto";
 import { Message } from "typegram";
-import { isEmpty, isUndefined } from "lodash";
+import { isEmpty, isNull, isUndefined } from "lodash";
+import { InjectQueue } from "@nestjs/bull";
+import {
+	BOT_QUEUE,
+	BOT_QUEUE_CREATE_POST,
+	BOT_QUEUE_CREATE_POST_DELAY,
+} from "bot/constants";
+import { Queue } from "bull";
+import { InjectRedis } from "@liaoliaots/nestjs-redis";
+import Redis from "ioredis";
+import { BotQueueCreatePostData } from "bot/dto";
+import { getPhotosForPostsKey } from "bot/utils/getPhotosForPostsKey";
 
 @Update()
 @UseGuards(AuthGuard)
 @UseFilters(AllExceptionFilter)
 export class BotUpdate {
-	constructor(private readonly pmsService: PMSService) {}
+	constructor(
+		private readonly pmsService: PMSService,
+		@InjectRedis() private readonly redis: Redis,
+		@InjectQueue(BOT_QUEUE)
+		private readonly botQueue: Queue<BotQueueCreatePostData>
+	) {}
 
 	@Start()
 	async startCommand(ctx: Context) {
@@ -36,27 +52,57 @@ export class BotUpdate {
 	@On("photo")
 	async onPhotoUpload(ctx: Context) {
 		const { accountId, requestId } = ctx;
-		const photos = (ctx.message as Message.PhotoMessage).photo;
+		const {
+			chat: { id: chatId },
+		} = ctx;
+		const message = ctx.message as Message.PhotoMessage;
+		const photos = message.photo;
+		const jobId = message.media_group_id;
 
 		if (isUndefined(photos) || isEmpty(photos)) {
 			return;
 		}
 
 		const largestPhoto = photos[photos.length - 1];
+		const photo = {
+			width: largestPhoto.width,
+			height: largestPhoto.height,
+			file: {
+				provider: FileProvider.TELEGRAM,
+				data: { fileId: largestPhoto.file_id },
+			},
+		};
 
-		await this.pmsService.createPost({
-			accountId,
-			requestId,
-			photos: [
-				{
-					width: largestPhoto.width,
-					height: largestPhoto.height,
-					file: {
-						provider: FileProvider.TELEGRAM,
-						data: { fileId: largestPhoto.file_id },
-					},
-				},
-			],
+		// Save photo to temporary redis storage
+		await this.redis.lpush(getPhotosForPostsKey(jobId), JSON.stringify(photo));
+
+		const photosRecords = await this.redis.lrange(
+			getPhotosForPostsKey(jobId),
+			0,
+			-1
+		);
+
+		const photosForPost: BotQueueCreatePostData["post"]["photos"] =
+			photosRecords.map((photosRecord) => JSON.parse(photosRecord));
+
+		const existingJob = await this.botQueue.getJob(jobId);
+		if (!isNull(existingJob)) {
+			await existingJob.remove();
+		}
+
+		const postCreateData: BotQueueCreatePostData = {
+			jobId,
+			chatId,
+			post: {
+				accountId,
+				requestId,
+				photos: photosForPost,
+			},
+		};
+
+		await this.botQueue.add(BOT_QUEUE_CREATE_POST, postCreateData, {
+			delay: BOT_QUEUE_CREATE_POST_DELAY,
+			jobId,
 		});
 	}
 }

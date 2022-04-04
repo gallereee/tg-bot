@@ -9,7 +9,7 @@ export default () => {
 			port: parseInt(process.env.PMS_PORT, 10),
 		},
 		botAccessToken: process.env.BOT_ACCESS_TOKEN,
-		redisUrl: process.env.REDIS_URL,
+		queueRedisUrl: process.env.QUEUE_REDIS_URL,
 		webHost: process.env.WEB_HOST,
 	};
 };

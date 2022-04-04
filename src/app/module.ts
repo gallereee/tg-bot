@@ -5,6 +5,8 @@ import * as winston from "winston";
 import config from "config";
 import { TelegrafModule } from "nestjs-telegraf";
 import { BotModule } from "bot/module";
+import { BullModule } from "@nestjs/bull";
+import { RedisModule } from "@liaoliaots/nestjs-redis";
 
 const ConfigModuleRoot = ConfigModule.forRoot();
 
@@ -29,7 +31,23 @@ const TelegrafModuleRoot = TelegrafModule.forRoot({
 	include: [BotModule],
 });
 
+const BullModuleRoot = BullModule.forRoot({
+	// @ts-ignore
+	redis: config().queueRedisUrl,
+});
+
+const RedisModuleRoot = RedisModule.forRoot({
+	config: { url: config().queueRedisUrl },
+});
+
 @Module({
-	imports: [ConfigModuleRoot, WinstonModuleRoot, TelegrafModuleRoot, BotModule],
+	imports: [
+		ConfigModuleRoot,
+		WinstonModuleRoot,
+		TelegrafModuleRoot,
+		RedisModuleRoot,
+		BullModuleRoot,
+		BotModule,
+	],
 })
 export class AppModule {}
