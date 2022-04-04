@@ -1,5 +1,9 @@
 import { TCPRequestCommon } from "types";
 
+interface Account {
+	id: string;
+}
+
 enum IAMAccountProviderType {
 	TELEGRAM_USER = "TELEGRAM_USER",
 }
@@ -16,4 +20,4 @@ interface IAMCreateTelegramUserAccountDto extends TCPRequestCommon {
 }
 
 export { IAMAccountProviderType };
-export type { IAMCreateTelegramUserAccountDto };
+export type { IAMCreateTelegramUserAccountDto, Account };

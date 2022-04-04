@@ -1,5 +1,11 @@
+import { Account } from "IAM/dto";
+
 interface TCPRequestCommon {
 	requestId: string;
 }
 
-export { TCPRequestCommon };
+interface TCPRequestWithAccountId {
+	accountId: Account["id"];
+}
+
+export { TCPRequestCommon, TCPRequestWithAccountId };

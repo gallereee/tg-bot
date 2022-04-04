@@ -7,13 +7,8 @@ import {
 } from "@nestjs/common";
 import { TelegrafExecutionContext } from "nestjs-telegraf";
 import { Context } from "bot/context";
-import {
-	IAMAccountProviderType,
-	IAMCreateTelegramUserAccountDto,
-} from "IAM/dto";
+import { IAMAccountProviderType } from "IAM/dto";
 import { IAMService } from "IAM/service";
-import { firstValueFrom } from "rxjs";
-import { IAM_CMD_ACCOUNTS_CREATE } from "IAM/constants";
 import { nanoid } from "nanoid";
 import { AllExceptionFilter } from "app/filters/exceptions";
 import { isNull } from "lodash";
@@ -33,7 +28,7 @@ export class AuthGuard implements CanActivate {
 
 		ctx.requestId = nanoid();
 
-		const payload: IAMCreateTelegramUserAccountDto = {
+		const account = await this.iamService.createAccount({
 			requestId: ctx.requestId,
 			providerType: IAMAccountProviderType.TELEGRAM_USER,
 			data: {
@@ -41,11 +36,9 @@ export class AuthGuard implements CanActivate {
 				username,
 				chatId: chatId.toString(),
 			},
-		};
+		});
 
-		const account = await firstValueFrom(
-			this.iamService.IAM.send({ cmd: IAM_CMD_ACCOUNTS_CREATE }, payload)
-		);
+		ctx.accountId = account.id;
 
 		return !isNull(account);
 	}
