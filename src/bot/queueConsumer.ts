@@ -3,7 +3,6 @@ import { BOT_QUEUE, BOT_QUEUE_CREATE_POST } from "bot/constants";
 import { Job } from "bull";
 import { UseFilters } from "@nestjs/common";
 import { AllExceptionFilter } from "app/filters/exceptions";
-import { PMSService } from "PMS/service";
 import { BotQueueCreatePostData } from "bot/dto";
 import { InjectRedis } from "@liaoliaots/nestjs-redis";
 import Redis from "ioredis";
@@ -12,6 +11,7 @@ import { InjectBot } from "nestjs-telegraf";
 import { Telegraf } from "telegraf";
 import { Context } from "bot/context";
 import config from "config";
+import { PMSService } from "@gallereee/pms";
 
 @Processor(BOT_QUEUE)
 @UseFilters(AllExceptionFilter)

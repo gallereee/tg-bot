@@ -8,6 +8,9 @@ import {
 import { TCPRequestCommon } from "types";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
+const ERROR_TEXT =
+	"Произошла ошибка.\nПожалуйста, напишите разработчику: @bd_dm.";
+
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
 	constructor(
@@ -15,11 +18,15 @@ export class AllExceptionFilter implements ExceptionFilter {
 	) {}
 
 	catch(exception: Error, host: ArgumentsHost) {
-		const [ctx] = host.getArgs<[TCPRequestCommon]>();
-		const { requestId } = ctx;
+		try {
+			const [ctx] = host.getArgs<[TCPRequestCommon]>();
+			const { requestId } = ctx;
 
-		this.logger.error({ error: exception, requestId });
+			this.logger.error({ error: exception, requestId });
 
-		return `Произошла ошибка.\nПожалуйста, напишите разработчику: @bd_dm.\n\nRequestId: ${requestId}`;
+			return `${ERROR_TEXT}\n\nRequestId: ${requestId}`;
+		} catch (e) {
+			return ERROR_TEXT;
+		}
 	}
 }

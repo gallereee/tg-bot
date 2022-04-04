@@ -7,6 +7,7 @@ import { TelegrafModule } from "nestjs-telegraf";
 import { BotModule } from "bot/module";
 import { BullModule } from "@nestjs/bull";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
+import { PMSModule } from "@gallereee/pms";
 
 const ConfigModuleRoot = ConfigModule.forRoot();
 
@@ -40,6 +41,11 @@ const RedisModuleRoot = RedisModule.forRoot({
 	config: { url: config().queueRedisUrl },
 });
 
+const PMSModuleRoot = PMSModule.register({
+	host: config().PMSService.host,
+	port: config().PMSService.port,
+});
+
 @Module({
 	imports: [
 		ConfigModuleRoot,
@@ -47,6 +53,7 @@ const RedisModuleRoot = RedisModule.forRoot({
 		TelegrafModuleRoot,
 		RedisModuleRoot,
 		BullModuleRoot,
+		PMSModuleRoot,
 		BotModule,
 	],
 })

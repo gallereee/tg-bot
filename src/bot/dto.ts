@@ -1,8 +1,8 @@
-import { PMSCreatePostDto } from "PMS/dto";
 import { Chat } from "typegram";
+import { CreatePostDto } from "@gallereee/pms";
 
 interface BotQueueCreatePostData {
-	post: PMSCreatePostDto;
+	post: CreatePostDto;
 	jobId: string;
 	chatId: Chat["id"];
 }

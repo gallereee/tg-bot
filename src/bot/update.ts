@@ -4,8 +4,6 @@ import config from "config";
 import { UseFilters, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "app/guards/auth";
 import { AllExceptionFilter } from "app/filters/exceptions";
-import { PMSService } from "PMS/service";
-import { FileProvider } from "PMS/dto";
 import { Message } from "typegram";
 import { isEmpty, isNull, isUndefined } from "lodash";
 import { InjectQueue } from "@nestjs/bull";
@@ -19,13 +17,13 @@ import { InjectRedis } from "@liaoliaots/nestjs-redis";
 import Redis from "ioredis";
 import { BotQueueCreatePostData } from "bot/dto";
 import { getPhotosForPostsKey } from "bot/utils/getPhotosForPostsKey";
+import { FileProvider } from "@gallereee/pms";
 
 @Update()
 @UseGuards(AuthGuard)
 @UseFilters(AllExceptionFilter)
 export class BotUpdate {
 	constructor(
-		private readonly pmsService: PMSService,
 		@InjectRedis() private readonly redis: Redis,
 		@InjectQueue(BOT_QUEUE)
 		private readonly botQueue: Queue<BotQueueCreatePostData>
@@ -86,7 +84,7 @@ export class BotUpdate {
 			photosRecords.map((photosRecord) => JSON.parse(photosRecord));
 
 		const existingJob = await this.botQueue.getJob(jobId);
-		if (!isNull(existingJob)) {
+		if (!isNull(existingJob) && !isUndefined(existingJob)) {
 			await existingJob.remove();
 		}
 
