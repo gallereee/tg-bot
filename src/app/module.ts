@@ -8,6 +8,7 @@ import { BotModule } from "bot/module";
 import { BullModule } from "@nestjs/bull";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
 import { PMSModule } from "@gallereee/pms";
+import { IAMModule } from "@gallereee/iam";
 
 const ConfigModuleRoot = ConfigModule.forRoot();
 
@@ -46,6 +47,11 @@ const PMSModuleRoot = PMSModule.register({
 	port: config().PMSService.port,
 });
 
+const IAMModuleRoot = IAMModule.register({
+	host: config().IAMService.host,
+	port: config().IAMService.port,
+});
+
 @Module({
 	imports: [
 		ConfigModuleRoot,
@@ -53,6 +59,7 @@ const PMSModuleRoot = PMSModule.register({
 		TelegrafModuleRoot,
 		RedisModuleRoot,
 		BullModuleRoot,
+		IAMModuleRoot,
 		PMSModuleRoot,
 		BotModule,
 	],

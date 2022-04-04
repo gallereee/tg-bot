@@ -5,8 +5,8 @@ import {
 	Inject,
 	LoggerService,
 } from "@nestjs/common";
-import { TCPRequestCommon } from "types";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import { TCPRequestCommon } from "@gallereee/pms";
 
 const ERROR_TEXT =
 	"Произошла ошибка.\nПожалуйста, напишите разработчику: @bd_dm.";

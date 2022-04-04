@@ -1,4 +1,0 @@
-const IAM_SERVICE = "IAM_SERVICE";
-const IAM_CMD_ACCOUNTS_CREATE = "accounts/create";
-
-export { IAM_SERVICE, IAM_CMD_ACCOUNTS_CREATE };

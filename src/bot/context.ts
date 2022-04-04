@@ -1,5 +1,5 @@
 import { Scenes } from "telegraf";
-import { TCPRequestCommon, TCPRequestWithAccountId } from "types";
+import { TCPRequestCommon, TCPRequestWithAccountId } from "@gallereee/pms";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Context
