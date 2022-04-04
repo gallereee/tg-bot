@@ -12,10 +12,12 @@ export class BotUpdate {
 	@Start()
 	async startCommand(ctx: Context) {
 		const {
+			// eslint-disable-next-line camelcase
 			from: { first_name, last_name },
 		} = ctx;
 
 		await ctx.reply(
+			// eslint-disable-next-line camelcase
 			`Привет, ${first_name} ${last_name}!\n` +
 				`С помощью этого бота ты сможешь загрузить свои фото в Gallereee! (${
 					config().webHost

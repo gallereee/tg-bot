@@ -16,7 +16,7 @@ export class AllExceptionFilter implements ExceptionFilter {
 
 	catch(exception: Error, host: ArgumentsHost) {
 		const [ctx] = host.getArgs<[TCPRequestCommon]>();
-		const requestId = ctx.requestId;
+		const { requestId } = ctx;
 
 		this.logger.error({ error: exception, requestId });
 
