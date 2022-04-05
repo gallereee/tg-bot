@@ -66,7 +66,7 @@ export class StartWizard {
 		}
 
 		await ctx.reply(
-			"Давай создадим тебе аккаунт\n" +
+			"Давай создадим тебе аккаунт.\n" +
 				"Введи имя пользователя, которое хочешь использовать",
 			Markup.keyboard(keyboard).oneTime().resize()
 		);

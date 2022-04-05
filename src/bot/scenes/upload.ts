@@ -50,7 +50,7 @@ export class UploadWizard {
 
 	@WizardStep(1)
 	async step1(@Context() ctx: WizardContext) {
-		await ctx.reply("Отправьте одно или несколько фото для загрузки");
+		await ctx.reply("Отправь одно или несколько фото для загрузки");
 
 		ctx.wizard.next();
 	}
@@ -121,7 +121,7 @@ export class UploadWizard {
 		[, session.postId] = actionName.split("/");
 
 		await ctx.reply(
-			"Отправьте описание для ваших фото",
+			"Напиши описание для твоих фото",
 			Markup.keyboard([HEARS_FINISH]).oneTime().resize()
 		);
 
