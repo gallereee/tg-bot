@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { TCPRequestCommon } from "@gallereee/pms";
+import { isString } from "lodash";
 
 const ERROR_TEXT =
 	"Произошла ошибка.\nПожалуйста, напишите разработчику: @bd_dm.";
@@ -23,6 +24,15 @@ export class AllExceptionFilter implements ExceptionFilter {
 			const { requestId } = ctx;
 
 			this.logger.error({ error: exception, requestId });
+
+			// @ts-ignore
+			if (exception.status === 403) {
+				return "Пожалуйста, начните с команды /start, чтобы создать аккаунт";
+			}
+
+			if (isString(exception)) {
+				return exception;
+			}
 
 			return `${ERROR_TEXT}\n\nRequestId: ${requestId}`;
 		} catch (e) {

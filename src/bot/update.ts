@@ -1,6 +1,5 @@
-import { Update, Start, On } from "nestjs-telegraf";
+import { Update, Start, On, Ctx } from "nestjs-telegraf";
 import { Context } from "bot/context";
-import config from "config";
 import { UseFilters, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "app/guards/auth";
 import { AllExceptionFilter } from "app/filters/exceptions";
@@ -11,6 +10,7 @@ import {
 	BOT_QUEUE,
 	BOT_QUEUE_CREATE_POST,
 	BOT_QUEUE_CREATE_POST_DELAY,
+	BOT_WIZARD_START,
 } from "bot/constants";
 import { Queue } from "bull";
 import { InjectRedis } from "@liaoliaots/nestjs-redis";
@@ -20,7 +20,6 @@ import { getPhotosForPostsKey } from "bot/utils/getPhotosForPostsKey";
 import { FileProvider } from "@gallereee/pms";
 
 @Update()
-@UseGuards(AuthGuard)
 @UseFilters(AllExceptionFilter)
 export class BotUpdate {
 	constructor(
@@ -30,24 +29,12 @@ export class BotUpdate {
 	) {}
 
 	@Start()
-	async startCommand(ctx: Context) {
-		const {
-			// eslint-disable-next-line camelcase
-			from: { first_name, last_name },
-		} = ctx;
-
-		await ctx.reply(
-			// eslint-disable-next-line camelcase
-			`Привет, ${first_name} ${last_name}!\n` +
-				`С помощью этого бота ты сможешь загрузить свои фото в Gallereee! (${
-					config().webHost
-				})\n\n` +
-				"Чтобы загрузить фото, отправь его боту.\n" +
-				"Если загрузишь несколько фото сразу, они будут объединены в один пост."
-		);
+	async startCommand(@Ctx() ctx: Context) {
+		await ctx.scene.enter(BOT_WIZARD_START);
 	}
 
 	@On("photo")
+	@UseGuards(AuthGuard)
 	async onPhotoUpload(ctx: Context) {
 		const { accountId, requestId } = ctx;
 		const {

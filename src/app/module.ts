@@ -9,6 +9,9 @@ import { BullModule } from "@nestjs/bull";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
 import { PMSModule } from "@gallereee/pms";
 import { IAMModule } from "@gallereee/iam";
+import { contextMiddleware } from "middleware/context";
+
+const TelegrafSession = require("telegraf-session-redis");
 
 const ConfigModuleRoot = ConfigModule.forRoot();
 
@@ -28,9 +31,16 @@ const WinstonModuleRoot = WinstonModule.forRoot({
 	],
 });
 
+const telegrafSession = new TelegrafSession({
+	store: {
+		url: config().queueRedisUrl,
+	},
+});
+
 const TelegrafModuleRoot = TelegrafModule.forRoot({
 	token: config().botAccessToken,
 	include: [BotModule],
+	middlewares: [contextMiddleware, telegrafSession],
 });
 
 const BullModuleRoot = BullModule.forRoot({
