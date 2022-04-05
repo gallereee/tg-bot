@@ -1,5 +1,5 @@
 import { Wizard, WizardStep, Context, On, Hears } from "nestjs-telegraf";
-import { BOT_WIZARD_START } from "bot/constants";
+import { BOT_ACTION_UPLOAD, BOT_WIZARD_START } from "bot/constants";
 import config from "config";
 import { UseFilters } from "@nestjs/common";
 import { AllExceptionFilter } from "app/filters/exceptions";
@@ -110,9 +110,15 @@ export class StartWizard {
 			return;
 		}
 
-		await ctx.reply(`Имя пользователя ${desiredUsername} успешно выбрано!`);
 		await ctx.reply(
-			"Теперь ты можешь загрузить одно или несколько фото в Gallereee"
+			`Имя пользователя ${desiredUsername} успешно выбрано!`,
+			Markup.removeKeyboard()
+		);
+		await ctx.reply(
+			"Теперь ты можешь загрузить одно или несколько фото в Gallereee",
+			Markup.inlineKeyboard([
+				[{ text: "Загрузить фото", callback_data: BOT_ACTION_UPLOAD }],
+			])
 		);
 		ctx.scene.leave();
 	}

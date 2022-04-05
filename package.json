@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@gallereee/iam": "^0.0.4",
-    "@gallereee/pms": "^0.0.3",
+    "@gallereee/pms": "^0.0.4",
     "@liaoliaots/nestjs-redis": "^8.0.0",
     "@nestjs/bull": "^0.5.4",
     "@nestjs/common": "^8.0.0",

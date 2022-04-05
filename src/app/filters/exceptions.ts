@@ -23,7 +23,11 @@ export class AllExceptionFilter implements ExceptionFilter {
 			const [ctx] = host.getArgs<[TCPRequestCommon]>();
 			const { requestId } = ctx;
 
-			this.logger.error({ error: exception, requestId });
+			this.logger.error({
+				error: exception.toString(),
+				stack: exception.stack.toString(),
+				requestId,
+			});
 
 			// @ts-ignore
 			if (exception.status === 403) {

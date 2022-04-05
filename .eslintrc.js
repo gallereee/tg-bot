@@ -5,5 +5,6 @@ module.exports = {
 		"no-useless-constructor": "off",
 		"class-methods-use-this": "off",
 		"max-classes-per-file": "off",
+		"no-underscore-dangle": "off",
 	},
 };
