@@ -1,7 +1,7 @@
 FROM node:16
 
 # Link image to repository
-LABEL org.opencontainers.image.source="https://github.com/gallereee/iam"
+LABEL org.opencontainers.image.source="https://github.com/gallereee/tg-bot"
 
 # Set github token required to fetch packages
 ARG github_token
