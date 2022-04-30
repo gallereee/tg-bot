@@ -72,6 +72,7 @@ export class UploadWizard {
 
 		const largestPhoto = photos[photos.length - 1];
 		const photo = {
+			order: message.message_id,
 			width: largestPhoto.width,
 			height: largestPhoto.height,
 			file: {
@@ -90,7 +91,9 @@ export class UploadWizard {
 		);
 
 		const photosForPost: BotQueueCreatePostData["post"]["photos"] =
-			photosRecords.map((photosRecord) => JSON.parse(photosRecord));
+			photosRecords
+				.map((photosRecord) => JSON.parse(photosRecord))
+				.sort((a, b) => a.order - b.order);
 
 		const existingJob = await this.botQueue.getJob(jobId);
 		if (!isNull(existingJob) && !isUndefined(existingJob)) {
