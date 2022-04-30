@@ -8,6 +8,8 @@ import {
 	BOT_WIZARD_START,
 	BOT_WIZARD_UPLOAD,
 } from "bot/constants";
+import { Markup } from "telegraf";
+import config from "../config";
 
 @Update()
 @UseFilters(AllExceptionFilter)
@@ -22,5 +24,21 @@ export class BotUpdate {
 	@UseGuards(AuthGuard)
 	async uploadCommand(@Ctx() ctx: Context) {
 		await ctx.scene.enter(BOT_WIZARD_UPLOAD);
+	}
+
+	@Command("control")
+	@UseGuards(AuthGuard)
+	async controlCommand(@Ctx() ctx: Context) {
+		ctx.reply(
+			"Для управления аккаунтом, нажмите на кнопку:",
+			Markup.inlineKeyboard([
+				[
+					{
+						text: "Управление аккаунтом",
+						web_app: { url: `${config().webHost}/auth/telegram/web-app` },
+					},
+				],
+			])
+		);
 	}
 }
