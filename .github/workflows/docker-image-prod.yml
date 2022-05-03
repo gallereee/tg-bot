@@ -46,4 +46,4 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
-          script: sh deploy-prod.sh
+          script: sh ./prod/deploy.sh tg-bot
