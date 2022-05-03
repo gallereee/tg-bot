@@ -3,16 +3,10 @@ name: Docker Build Stage
 on:
   push:
     branches: [ stage ]
-  pull_request:
-    branches: [ stage ]
-
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       -
         name: Checkout
@@ -38,3 +32,12 @@ jobs:
           tags: ghcr.io/gallereee/tg-bot:stage
           build-args: |
             github_token=${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Deploy on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: sh ./stage/deploy.sh tg-bot
