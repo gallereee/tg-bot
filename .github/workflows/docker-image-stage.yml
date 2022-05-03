@@ -3,16 +3,10 @@ name: Docker Build Stage
 on:
   push:
     branches: [ stage ]
-  pull_request:
-    branches: [ stage ]
-
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       -
         name: Checkout
