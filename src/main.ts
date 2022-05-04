@@ -9,7 +9,7 @@ async function bootstrapWebHookMode() {
 	app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
 	const bot = app.get(getBotToken());
-	app.use(bot.webhookCallback(`/${config().bot.webhookSecret}`));
+	app.use(bot.webhookCallback(`/${config().bot.accessToken}`));
 
 	await app.listen(config().bot.port);
 }
