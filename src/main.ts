@@ -10,6 +10,8 @@ async function bootstrapWebHookMode() {
 
 	const bot = app.get(getBotToken());
 	app.use(bot.webhookCallback(`/${config().bot.webhookSecret}`));
+
+	await app.listen(config().bot.port);
 }
 
 async function bootstrapPollMode() {
