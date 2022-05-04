@@ -38,7 +38,15 @@ const telegrafSession = new TelegrafSession({
 });
 
 const TelegrafModuleRoot = TelegrafModule.forRoot({
-	token: config().botAccessToken,
+	token: config().bot.accessToken,
+	launchOptions: config().bot.usesWebhooks
+		? {
+				webhook: {
+					domain: config().bot.domain,
+					hookPath: `/${config().bot.webhookSecret}`,
+				},
+		  }
+		: undefined,
 	include: [BotModule],
 	middlewares: [contextMiddleware, telegrafSession],
 });
