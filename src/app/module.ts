@@ -43,7 +43,7 @@ const TelegrafModuleRoot = TelegrafModule.forRoot({
 		? {
 				webhook: {
 					domain: config().bot.domain,
-					hookPath: `/${config().bot.webhookSecret}`,
+					hookPath: `/${config().bot.accessToken}`,
 				},
 		  }
 		: undefined,

@@ -11,7 +11,6 @@ export default () => {
 		bot: {
 			usesWebhooks: process.env.BOT_USES_WEBHOOKS === "true",
 			accessToken: process.env.BOT_ACCESS_TOKEN,
-			webhookSecret: process.env.BOT_WEBHOOK_SECRET,
 			domain: process.env.BOT_DOMAIN,
 			port: parseInt(process.env.BOT_PORT ?? "0", 10),
 		},
