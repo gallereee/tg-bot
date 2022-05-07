@@ -1,4 +1,4 @@
-import { Update, Ctx, Command, On, Action } from "nestjs-telegraf";
+import { Update, Ctx, Command, On, Action, Start } from "nestjs-telegraf";
 import { Context } from "bot/context";
 import { UseFilters, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "app/guards/auth";
@@ -33,7 +33,7 @@ export class BotUpdate {
 		@InjectRedis() private readonly redis: Redis
 	) {}
 
-	@Command("start")
+	@Start()
 	async startCommand(@Ctx() ctx: Context) {
 		await ctx.scene.enter(BOT_WIZARD_START);
 	}
