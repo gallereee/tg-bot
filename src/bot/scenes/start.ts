@@ -1,6 +1,5 @@
 import { Wizard, WizardStep, Context, On, Hears } from "nestjs-telegraf";
 import { BOT_ACTION_UPLOAD, BOT_WIZARD_START } from "bot/constants";
-import config from "config";
 import { UseFilters } from "@nestjs/common";
 import { AllExceptionFilter } from "app/filters/exceptions";
 import { Markup } from "telegraf";
@@ -27,7 +26,12 @@ export class StartWizard {
 	async step1(@Context() ctx: WizardContext) {
 		const {
 			// eslint-disable-next-line camelcase
-			from: { id: userId, first_name, last_name, username: telegramUsername },
+			from: {
+				id: userId,
+				first_name: firstName,
+				last_name: lastName,
+				username: telegramUsername,
+			},
 			requestId,
 		} = ctx;
 
@@ -37,8 +41,9 @@ export class StartWizard {
 		});
 
 		if (isUserExists) {
-			// eslint-disable-next-line camelcase
-			await ctx.reply(`Привет, ${first_name}!`);
+			await ctx.reply(
+				`Привет, ${firstName}! Для получения информации о боте, используй /info`
+			);
 
 			ctx.scene.leave();
 			return;
@@ -53,11 +58,27 @@ export class StartWizard {
 			  })
 			: false;
 
+		let userFullName = "";
+		if (!isUndefined(firstName)) {
+			userFullName += firstName;
+		}
+		if (!isUndefined(firstName) && !isUndefined(lastName)) {
+			userFullName += " ";
+		}
+		if (!isUndefined(lastName)) {
+			userFullName += lastName;
+		}
+
 		await ctx.replyWithHTML(
-			// eslint-disable-next-line camelcase
-			`Привет, ${first_name} ${last_name}!\n` +
-				"С помощью этого бота ты сможешь загрузить свои фото в Gallereee!",
-			Markup.inlineKeyboard([[{ text: "Gallereee", url: config().webHost }]])
+			`Привет, ${userFullName}!\n` +
+				"\n" +
+				"С помощью этого бота ты сможешь загрузить свои фото в Gallereee.\n" +
+				"\n" +
+				"• Для загрузки фото, просто отправь одно или несколько фото в чат\n" +
+				"\n" +
+				"• Для редактирования фото и управления аккаунтом, перейди в меню /menu\n" +
+				"\n" +
+				"• Для подписки на человека, отправь его контакт боту"
 		);
 
 		const keyboard = [[HEARS_CANCEL]];
