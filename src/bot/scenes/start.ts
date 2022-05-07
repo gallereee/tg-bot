@@ -1,5 +1,5 @@
 import { Wizard, WizardStep, Context, On, Hears } from "nestjs-telegraf";
-import { BOT_ACTION_UPLOAD, BOT_WIZARD_START } from "bot/constants";
+import { BOT_WIZARD_START, infoText } from "bot/constants";
 import { UseFilters } from "@nestjs/common";
 import { AllExceptionFilter } from "app/filters/exceptions";
 import { Markup } from "telegraf";
@@ -69,17 +69,7 @@ export class StartWizard {
 			userFullName += lastName;
 		}
 
-		await ctx.replyWithHTML(
-			`Привет, ${userFullName}!\n` +
-				"\n" +
-				"С помощью этого бота ты сможешь загрузить свои фото в Gallereee.\n" +
-				"\n" +
-				"• Для загрузки фото, просто отправь одно или несколько фото в чат\n" +
-				"\n" +
-				"• Для редактирования фото и управления аккаунтом, перейди в меню /menu\n" +
-				"\n" +
-				"• Для подписки на человека, отправь его контакт боту"
-		);
+		await ctx.replyWithHTML(`Привет, ${userFullName}!\n\n${infoText}`);
 
 		const keyboard = [[HEARS_CANCEL]];
 		if (isUsernameAvailable) {
@@ -112,7 +102,7 @@ export class StartWizard {
 		});
 
 		if (!isUsernameAvailable) {
-			await ctx.reply("Это имя пользователя уже занято. Выберите другое");
+			await ctx.reply("Это имя пользователя уже занято. Выбери другое");
 			return;
 		}
 
@@ -127,7 +117,7 @@ export class StartWizard {
 		});
 
 		if (isNull(account)) {
-			await ctx.reply("Что-то пошло не так. Попробуйте еще раз");
+			await ctx.reply("Что-то пошло не так. Попробуй ещё раз");
 			return;
 		}
 
@@ -136,10 +126,7 @@ export class StartWizard {
 			Markup.removeKeyboard()
 		);
 		await ctx.reply(
-			"Теперь ты можешь загрузить одно или несколько фото в Gallereee",
-			Markup.inlineKeyboard([
-				[{ text: "Загрузить фото", callback_data: BOT_ACTION_UPLOAD }],
-			])
+			"Теперь ты можешь загрузить одно или несколько фото в Gallereee. Для этого отправь их в чат"
 		);
 		ctx.scene.leave();
 	}

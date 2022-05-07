@@ -9,8 +9,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { TCPRequestCommon } from "@gallereee/pms";
 import { isString } from "lodash";
 
-const ERROR_TEXT =
-	"Произошла ошибка.\nПожалуйста, напишите разработчику: @bd_dm.";
+const ERROR_TEXT = "Произошла ошибка";
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -31,7 +30,7 @@ export class AllExceptionFilter implements ExceptionFilter {
 
 			// @ts-ignore
 			if (exception.status === 403) {
-				return "Пожалуйста, начните с команды /start, чтобы создать аккаунт";
+				return "Пожалуйста, начни с команды /start, чтобы создать аккаунт";
 			}
 
 			if (isString(exception)) {
