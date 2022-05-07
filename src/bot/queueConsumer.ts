@@ -38,28 +38,42 @@ export class BotQueueConsumer {
 			const post = await this.pmsService.createPost(postCreateData);
 			const isPluralPhotos = postCreateData.photos.length > 1;
 
+			const showPostWebAppParams = {
+				for: "show-post",
+				"post-id": post.id,
+			};
+			const showPostWebAppUrl = `${
+				config().webHost
+			}/auth/telegram/web-app/${encodeURIComponent(
+				JSON.stringify(showPostWebAppParams)
+			)}`;
+			const showPostButton = {
+				text: "Посмотреть",
+				web_app: {
+					url: showPostWebAppUrl,
+				},
+			};
+
+			const myGallereeeWebAppParams = {
+				for: "my-gallereee",
+			};
+			const myGallereeeWebAppUrl = `${
+				config().webHost
+			}/auth/telegram/web-app/${encodeURIComponent(
+				JSON.stringify(myGallereeeWebAppParams)
+			)}`;
+			const myGallereeeButton = {
+				text: "Моя галерея",
+				web_app: {
+					url: myGallereeeWebAppUrl,
+				},
+			};
+
 			await this.bot.telegram.sendMessage(
 				chatId,
 				`Фото успешно ${isPluralPhotos ? "загружены" : "загружено"}`,
 				Markup.inlineKeyboard([
-					[
-						{
-							text: "Посмотреть",
-							web_app: {
-								url: `${
-									config().webHost
-								}/auth/telegram/web-app?for=show-post&post-id=${post.id}`,
-							},
-						},
-						{
-							text: "Моя галерея",
-							web_app: {
-								url: `${
-									config().webHost
-								}/auth/telegram/web-app?for=my-gallereee`,
-							},
-						},
-					],
+					[showPostButton, myGallereeeButton],
 					[
 						{
 							text: "Добавить описание",
