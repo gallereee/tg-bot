@@ -39,6 +39,7 @@ export class AllExceptionFilter implements ExceptionFilter {
 
 			return `${ERROR_TEXT}\n\nRequestId: ${requestId}`;
 		} catch (e) {
+			this.logger.error({ error: e.toString() });
 			return ERROR_TEXT;
 		}
 	}
