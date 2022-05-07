@@ -45,7 +45,19 @@ export class BotQueueConsumer {
 					[
 						{
 							text: "Посмотреть",
-							url: `${config().webHost}/posts/${post.id}`,
+							web_app: {
+								url: `${
+									config().webHost
+								}/auth/telegram/web-app?for=show-post&post-id=${post.id}`,
+							},
+						},
+						{
+							text: "Моя галерея",
+							web_app: {
+								url: `${
+									config().webHost
+								}/auth/telegram/web-app?for=my-gallereee`,
+							},
 						},
 					],
 					[
