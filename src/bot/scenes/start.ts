@@ -69,7 +69,7 @@ export class StartWizard {
 			userFullName += lastName;
 		}
 
-		await ctx.replyWithHTML(`Привет, ${userFullName}!\n\n${infoText}`);
+		await ctx.replyWithMarkdownV2(`Привет, ${userFullName}!\n\n${infoText}`);
 
 		const keyboard = [[HEARS_CANCEL]];
 		if (isUsernameAvailable) {

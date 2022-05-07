@@ -40,7 +40,7 @@ export class BotUpdate {
 
 	@Command("info")
 	async infoCommand(@Ctx() ctx: Context) {
-		await ctx.reply(infoText, { parse_mode: "MarkdownV2" });
+		await ctx.replyWithMarkdownV2(infoText);
 	}
 
 	@On("photo")
