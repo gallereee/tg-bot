@@ -14,8 +14,8 @@ import { getPhotosForPostsKey } from "bot/utils/getPhotosForPostsKey";
 import { InjectBot } from "nestjs-telegraf";
 import { Markup, Telegraf } from "telegraf";
 import { Context } from "bot/context";
-import config from "config";
 import { PMSService } from "@gallereee/pms";
+import { getWebAppUrl } from "bot/utils/getWebAppUrl";
 
 @Processor(BOT_QUEUE)
 @UseFilters(AllExceptionFilter)
@@ -42,30 +42,20 @@ export class BotQueueConsumer {
 				for: "show-post",
 				"post-id": post.id,
 			};
-			const showPostWebAppUrl = `${
-				config().webHost
-			}/auth/telegram/web-app/${encodeURIComponent(
-				JSON.stringify(showPostWebAppParams)
-			)}`;
 			const showPostButton = {
 				text: "Посмотреть",
 				web_app: {
-					url: showPostWebAppUrl,
+					url: getWebAppUrl(showPostWebAppParams),
 				},
 			};
 
 			const myGallereeeWebAppParams = {
 				for: "my-gallereee",
 			};
-			const myGallereeeWebAppUrl = `${
-				config().webHost
-			}/auth/telegram/web-app/${encodeURIComponent(
-				JSON.stringify(myGallereeeWebAppParams)
-			)}`;
 			const myGallereeeButton = {
 				text: "Моя галерея",
 				web_app: {
-					url: myGallereeeWebAppUrl,
+					url: getWebAppUrl(myGallereeeWebAppParams),
 				},
 			};
 

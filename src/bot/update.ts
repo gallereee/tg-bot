@@ -22,7 +22,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { InjectRedis } from "@liaoliaots/nestjs-redis";
 import Redis from "ioredis";
-import config from "../config";
+import { getWebAppUrl } from "bot/utils/getWebAppUrl";
 
 @Update()
 @UseFilters(AllExceptionFilter)
@@ -119,7 +119,7 @@ export class BotUpdate {
 					{
 						text: "Моя галерея",
 						web_app: {
-							url: `${config().webHost}/auth/telegram/web-app?for=my-gallereee`,
+							url: getWebAppUrl({ for: "my-gallereee" }),
 						},
 					},
 				],
