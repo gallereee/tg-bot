@@ -1,6 +1,5 @@
 import { Wizard, WizardStep, Context, On, Hears } from "nestjs-telegraf";
-import { BOT_ACTION_UPLOAD, BOT_WIZARD_START } from "bot/constants";
-import config from "config";
+import { BOT_WIZARD_START, infoText } from "bot/constants";
 import { UseFilters } from "@nestjs/common";
 import { AllExceptionFilter } from "app/filters/exceptions";
 import { Markup } from "telegraf";
@@ -27,7 +26,12 @@ export class StartWizard {
 	async step1(@Context() ctx: WizardContext) {
 		const {
 			// eslint-disable-next-line camelcase
-			from: { id: userId, first_name, last_name, username: telegramUsername },
+			from: {
+				id: userId,
+				first_name: firstName,
+				last_name: lastName,
+				username: telegramUsername,
+			},
 			requestId,
 		} = ctx;
 
@@ -37,8 +41,9 @@ export class StartWizard {
 		});
 
 		if (isUserExists) {
-			// eslint-disable-next-line camelcase
-			await ctx.reply(`Привет, ${first_name}!`);
+			await ctx.reply(
+				`Привет, ${firstName}! Для получения информации о боте, используй /info`
+			);
 
 			ctx.scene.leave();
 			return;
@@ -53,12 +58,18 @@ export class StartWizard {
 			  })
 			: false;
 
-		await ctx.replyWithHTML(
-			// eslint-disable-next-line camelcase
-			`Привет, ${first_name} ${last_name}!\n` +
-				"С помощью этого бота ты сможешь загрузить свои фото в Gallereee!",
-			Markup.inlineKeyboard([[{ text: "Gallereee", url: config().webHost }]])
-		);
+		let userFullName = "";
+		if (!isUndefined(firstName)) {
+			userFullName += firstName;
+		}
+		if (!isUndefined(firstName) && !isUndefined(lastName)) {
+			userFullName += " ";
+		}
+		if (!isUndefined(lastName)) {
+			userFullName += lastName;
+		}
+
+		await ctx.replyWithMarkdownV2(`Привет, ${userFullName}\\!\n\n${infoText}`);
 
 		const keyboard = [[HEARS_CANCEL]];
 		if (isUsernameAvailable) {
@@ -91,7 +102,7 @@ export class StartWizard {
 		});
 
 		if (!isUsernameAvailable) {
-			await ctx.reply("Это имя пользователя уже занято. Выберите другое");
+			await ctx.reply("Это имя пользователя уже занято. Выбери другое");
 			return;
 		}
 
@@ -106,7 +117,7 @@ export class StartWizard {
 		});
 
 		if (isNull(account)) {
-			await ctx.reply("Что-то пошло не так. Попробуйте еще раз");
+			await ctx.reply("Что-то пошло не так. Попробуй ещё раз");
 			return;
 		}
 
@@ -115,10 +126,7 @@ export class StartWizard {
 			Markup.removeKeyboard()
 		);
 		await ctx.reply(
-			"Теперь ты можешь загрузить одно или несколько фото в Gallereee",
-			Markup.inlineKeyboard([
-				[{ text: "Загрузить фото", callback_data: BOT_ACTION_UPLOAD }],
-			])
+			"Теперь ты можешь загрузить одно или несколько фото в Gallereee. Для этого отправь их в чат"
 		);
 		ctx.scene.leave();
 	}

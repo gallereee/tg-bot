@@ -14,16 +14,14 @@ import { getPhotosForPostsKey } from "bot/utils/getPhotosForPostsKey";
 import { InjectBot } from "nestjs-telegraf";
 import { Markup, Telegraf } from "telegraf";
 import { Context } from "bot/context";
-import config from "config";
 import { PMSService } from "@gallereee/pms";
-import { IAMService } from "@gallereee/iam";
+import { getWebAppUrl } from "bot/utils/getWebAppUrl";
 
 @Processor(BOT_QUEUE)
 @UseFilters(AllExceptionFilter)
 export class BotQueueConsumer {
 	constructor(
 		private readonly pmsService: PMSService,
-		private readonly iamService: IAMService,
 		@InjectBot() private readonly bot: Telegraf<Context>,
 		@InjectRedis() private readonly redis: Redis
 	) {}
@@ -38,25 +36,34 @@ export class BotQueueConsumer {
 			await this.redis.del(getPhotosForPostsKey(jobId));
 
 			const post = await this.pmsService.createPost(postCreateData);
-			const account = await this.iamService.get({
-				id: postCreateData.accountId,
-				requestId: postCreateData.requestId,
-			});
+			const isPluralPhotos = postCreateData.photos.length > 1;
+
+			const showPostWebAppParams = {
+				for: "show-post",
+				"post-id": post.id,
+			};
+			const showPostButton = {
+				text: "Посмотреть",
+				web_app: {
+					url: getWebAppUrl(showPostWebAppParams),
+				},
+			};
+
+			const myGallereeeWebAppParams = {
+				for: "my-gallereee",
+			};
+			const myGallereeeButton = {
+				text: "Моя галерея",
+				web_app: {
+					url: getWebAppUrl(myGallereeeWebAppParams),
+				},
+			};
 
 			await this.bot.telegram.sendMessage(
 				chatId,
-				"Фото успешно загружены",
+				`Фото успешно ${isPluralPhotos ? "загружены" : "загружено"}`,
 				Markup.inlineKeyboard([
-					[
-						{
-							text: "Посмотреть",
-							url: `${config().webHost}/posts/${post.id}`,
-						},
-						{
-							text: "Моя галерея",
-							url: `${config().webHost}/accounts/${account.username}`,
-						},
-					],
+					[showPostButton, myGallereeeButton],
 					[
 						{
 							text: "Добавить описание",
